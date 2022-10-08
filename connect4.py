@@ -39,16 +39,23 @@ def check_victory(board, who_played: int): #comment: there might be better solut
             try:
                 if board[7 * i + j] == board[7 * i + j + 1] == board[7 * i + j + 2] == board[7 * i + j + 3] == who_played:
                     return who_played #horizontal check
-                elif board[7 * i + j] == board[7 * (i + 1) + j] == board[7 * (i + 2) + j] == board[7 * (i + 3) + j] == who_played:
-                    return who_played #vertical check
-                elif board[7 * i + j] == board[7 * (i + 1) + j + 1] == board[7 * (i + 2) + j + 2] == board[7 * (i + 3) + j + 3] == who_played:
-                    return who_played #right diagonal check
-                elif board[7 * i + j] == board[7 * (i + 1) + j - 1] == board[7 * (i + 2) + j - 2] == board[7 * (i + 3) + j - 3] == who_played:
-                    return who_played #left diagonal check
-                else:
-                    return 0
             except IndexError:
-                continue
+                pass
+            try: 
+                if board[7 * i + j] == board[7 * (i + 1) + j] == board[7 * (i + 2) + j] == board[7 * (i + 3) + j] == who_played:
+                    return who_played #vertical check
+            except IndexError:
+                pass
+            try:
+                if board[7 * i + j] == board[7 * (i + 1) + j + 1] == board[7 * (i + 2) + j + 2] == board[7 * (i + 3) + j + 3] == who_played:
+                    return who_played #right diagonal check
+            except IndexError:
+                pass
+            try:
+                if board[7 * i + j] == board[7 * (i + 1) + j - 1] == board[7 * (i + 2) + j - 2] == board[7 * (i + 3) + j - 3] == who_played:
+                    return who_played #left diagonal check
+            except IndexError:
+                pass
 
 def computer_move(board, turn, level):
     if level == 1:
@@ -111,6 +118,8 @@ def main():
         while True:
             ask_input(board, 1)
             ask_input(board, 2)
+            print(check_victory(board, 1))
+            print(check_victory(board, 2))
             if check_victory(board, 1) == 1:
                 print("Congratulation! Player 1 has won the game!")
                 break
@@ -140,9 +149,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-   
-    

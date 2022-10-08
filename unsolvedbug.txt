@@ -1,0 +1,3 @@
+Lỗi chưa sửa
+1. Check-victory không dừng lại đúng lúc (trò chơi kéo dài vô thời hạn)
+2. Chưa có check kết quả hòa (bảng đã đầy nhưng không người chơi nào chiến thắng)
