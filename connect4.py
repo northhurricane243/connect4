@@ -4,6 +4,7 @@ import math
 import sys
 # import test
 
+###
 def check_move(board, turn, col, pop):
     if col in range(7):
         if pop:
@@ -21,6 +22,7 @@ def check_move(board, turn, col, pop):
     else:
         return False
 
+###
 def apply_move(board, turn, col, pop):
     if not pop:
         for i in range(col, row * 7 + 1, 7):
@@ -33,7 +35,9 @@ def apply_move(board, turn, col, pop):
         board[7 * (row - 1) + col] = 0
     return board.copy()
 
-def check_victory(board, who_played: int): #comment: there might be better solution but we are NOT computer scientists
+
+###
+def check_victory(board, who_played: int): # comment: there might be better solution but we are NOT computer scientists
     for i in range(0, row):
         for j in range(7):
             try:
@@ -57,6 +61,9 @@ def check_victory(board, who_played: int): #comment: there might be better solut
             except IndexError:
                 pass
 
+
+
+###
 def computer_move(board, turn, level):
     if level == 1:
         computer_pop = bool(random.getrandbits(1))
@@ -71,7 +78,24 @@ def computer_move(board, turn, level):
 
     elif level == 2:
         print("AI level 2 is making a move...")
-    
+
+
+
+###
+def check_three(board):
+    for c in range(7):
+        for r in range(row):
+            if board[7 * i + j] == board[7 * i + j - 1] == board[7 * i + j + 1]:
+                return True
+            elif board[7 * i + j] == board[7 * (i + 1) + j + 1] == board[7 * (i - 1) + j - 1]:
+                return True
+            elif board[7 * i + j] == board[7 * (i - 1) + j + 1] == board[7 * (i + 1) + j - 1]:
+                return True
+            else:
+                return False
+        
+
+###    
 def display_board(board : list):
     print()
     for i in range(row - 1, -1, -1):
@@ -83,11 +107,14 @@ def display_board(board : list):
     pass
 
 
+###
 def menu():
     print('=== Welcome to the Connect4 game ===\nThis game was created by Monarch and Nan-fang\nNo copyright is allowed in any form.\n')
     print('1.Start the game with a computer\n2.Start the game with another player')
     pass
 
+
+###
 def ask_input_text(player : int):
     col = int(input("Player " + str(player) + " select column: "))
     popinput = input("Do you want to pop? (Y/N): ")
@@ -97,6 +124,8 @@ def ask_input_text(player : int):
         pop = False
     return col, pop
 
+
+###
 def ask_input(board, player):
     col, pop = ask_input_text(player)
     while not check_move(board, player, col, pop):
@@ -104,6 +133,7 @@ def ask_input(board, player):
         col, pop = ask_input_text(player)
     apply_move(board, player, col, pop)
     display_board(board)
+
 
 def main():
     menu()
