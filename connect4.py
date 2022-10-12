@@ -3,6 +3,7 @@ import random
 import math
 import sys
 # import test
+import numpy as np
 
 ###
 def check_move(board, turn, col, pop):
@@ -78,6 +79,7 @@ def computer_move(board, turn, level):
 
     elif level == 2:
         print("AI level 2 is making a move...")
+        if (check_board(board)[0]):
 
 
 
@@ -86,14 +88,14 @@ def check_three(board):
     for c in range(7):
         for r in range(row):
             if board[7 * i + j] == board[7 * i + j - 1] == board[7 * i + j + 1]:
-                return True
+                return (True, i, j)
             elif board[7 * i + j] == board[7 * (i + 1) + j + 1] == board[7 * (i - 1) + j - 1]:
-                return True
+                return (True, i, j, 0)
             elif board[7 * i + j] == board[7 * (i - 1) + j + 1] == board[7 * (i + 1) + j - 1]:
-                return True
+                return (True, i, j, 1)
             else:
                 return False
-        
+
 
 ###    
 def display_board(board : list):
@@ -112,6 +114,12 @@ def menu():
     print('=== Welcome to the Connect4 game ===\nThis game was created by Monarch and Nan-fang\nNo copyright is allowed in any form.\n')
     print('1.Start the game with a computer\n2.Start the game with another player')
     pass
+
+
+###
+def check_board(board):
+    for r in range(7):
+        for
 
 
 ###
@@ -140,7 +148,7 @@ def main():
     choice = input('> ')
     global row
     row = int(input("Enter the row numbers: "))
-    board = []
+    board = 
     for _ in range(7 * row):
         board.append(0)
     display_board(board)
@@ -156,6 +164,7 @@ def main():
             elif check_victory(board, 2) == 2:
                 print("Congratulation! Player 2 has won the game!")
                 break
+    ###
     elif choice == '1':
         level = int(input("Select level: 1. Easy 2. Medium "))
         computer_turn = int(input("Do you want the CPU to be Player 1 or Player 2? "))
