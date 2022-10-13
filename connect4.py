@@ -24,7 +24,6 @@ def check_move(board, turn, col, pop):
     else:
         return False
 
-###
 def apply_move(board, turn, col, pop):
     if not pop:
         for i in range(col, row * 7 + 1, 7):
@@ -32,7 +31,7 @@ def apply_move(board, turn, col, pop):
                 board[i] = turn 
                 break
     elif pop:
-        for i in range(7 * (row-2), -1, -7):
+        for i in range(col, 7*(row-1)+col, 7):
             board[i] = board[i + 7]
         board[7 * (row - 1) + col] = 0
     return board.copy()
@@ -90,8 +89,8 @@ def computer_level_2(board, turn, opponent_turn):
         if detect_victory(board, opponent_turn) != 0:
             for col in range(7):
                 for pop in (True, False):
-                    board_test = board
-                    if check_move(board, turn, col, pop):
+                    board_test = board.copy()
+                    if check_move(board_test, turn, col, pop):
                         apply_move(board_test, turn, col, pop)
                         if detect_victory(board_test, opponent_turn) == 0:
                             return col, pop
@@ -109,7 +108,6 @@ def computer_move(board, turn, level, opponent_turn):
 
     elif level == 2:
         computer_col, computer_pop = computer_level_2(board, turn, opponent_turn)
-        print(computer_col, computer_pop)
         print("AI level 2 is making a move...")
         apply_move(board, turn, computer_col, computer_pop)
         display_board(board)
