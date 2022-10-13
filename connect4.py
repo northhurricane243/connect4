@@ -38,6 +38,28 @@ def apply_move(board, turn, col, pop):
 
 
 ###
+def check_full(board):
+    check = True
+    for i in range(len(board)):
+        if i != 0:
+            check = True
+        else:
+            check = False
+            break
+    return check
+
+
+### 
+def check_draw(board):
+    if check_full(board):
+        if check_victory(board):
+            return True
+        else:
+            return False
+    else:
+        return False
+
+###
 def check_victory(board, who_played: int): # comment: there might be better solution but we are NOT computer scientists
     for i in range(0, row):
         for j in range(7):
