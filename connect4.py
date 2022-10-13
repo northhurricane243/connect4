@@ -4,6 +4,7 @@ import math
 import sys
 # import test
 import numpy as np
+import time
 
 ###
 def check_move(board, turn, col, pop):
@@ -63,8 +64,7 @@ def check_victory(board, who_played: int): # comment: there might be better solu
                 pass
 
 
-
-###
+### computer move
 def computer_move(board, turn, level):
     if level == 1:
         computer_pop = bool(random.getrandbits(1))
@@ -79,23 +79,18 @@ def computer_move(board, turn, level):
 
     elif level == 2:
         print("AI level 2 is making a move...")
-        if (check_board(board)[0]):
+        
+### count timer of a turn
+def countdown(t):
+    while(t):
+        mins, sec = divmod(60)
+        timer = '{:02d}:{:02d}'.format(mins, sec)
+        print(timer, end = '\r')
+        time.sleep(1)
+        t -= 1
 
-
-
-###
-def check_three(board):
-    for c in range(7):
-        for r in range(row):
-            if board[7 * i + j] == board[7 * i + j - 1] == board[7 * i + j + 1]:
-                return (True, i, j)
-            elif board[7 * i + j] == board[7 * (i + 1) + j + 1] == board[7 * (i - 1) + j - 1]:
-                return (True, i, j, 0)
-            elif board[7 * i + j] == board[7 * (i - 1) + j + 1] == board[7 * (i + 1) + j - 1]:
-                return (True, i, j, 1)
-            else:
-                return False
-
+    print("Time out!")
+    sys.exit()
 
 ###    
 def display_board(board : list):
@@ -108,18 +103,12 @@ def display_board(board : list):
 
     pass
 
-
 ###
 def menu():
     print('=== Welcome to the Connect4 game ===\nThis game was created by Monarch and Nan-fang\nNo copyright is allowed in any form.\n')
     print('1.Start the game with a computer\n2.Start the game with another player')
     pass
 
-
-###
-def check_board(board):
-    for r in range(7):
-        for
 
 
 ###
@@ -148,10 +137,14 @@ def main():
     choice = input('> ')
     global row
     row = int(input("Enter the row numbers: "))
-    board = 
+    board = []
+    
+    ###
     for _ in range(7 * row):
         board.append(0)
     display_board(board)
+
+    ###
     if choice == '2': 
         while True:
             ask_input(board, 1)
