@@ -3,7 +3,10 @@ import random
 import math
 import sys
 # import test
+import numpy as np
+import time
 
+###
 def check_move(board, turn, col, pop):
     if col in range(7):
         if pop:
@@ -21,6 +24,7 @@ def check_move(board, turn, col, pop):
     else:
         return False
 
+###
 def apply_move(board, turn, col, pop):
     if not pop:
         for i in range(col, row * 7 + 1, 7):
@@ -33,7 +37,9 @@ def apply_move(board, turn, col, pop):
         board[7 * (row - 1) + col] = 0
     return board.copy()
 
-def check_victory(board, who_played: int): #comment: there might be better solution but we are NOT computer scientists
+
+###
+def check_victory(board, who_played: int): # comment: there might be better solution but we are NOT computer scientists
     for i in range(0, row):
         for j in range(7):
             try:
@@ -56,6 +62,7 @@ def check_victory(board, who_played: int): #comment: there might be better solut
                     return who_played #left diagonal check
             except IndexError:
                 pass
+
 
 def detect_victory(board, turn):
     for col in range(7):
@@ -106,7 +113,20 @@ def computer_move(board, turn, level, opponent_turn):
         print("AI level 2 is making a move...")
         apply_move(board, turn, computer_col, computer_pop)
         display_board(board)
-    
+        
+### count timer of a turn
+def countdown(t):
+    while(t):
+        mins, sec = divmod(60)
+        timer = '{:02d}:{:02d}'.format(mins, sec)
+        print(timer, end = '\r')
+        time.sleep(1)
+        t -= 1
+
+    print("Time out!")
+    sys.exit()
+
+###    
 def display_board(board : list):
     print()
     for i in range(row - 1, -1, -1):
@@ -117,12 +137,15 @@ def display_board(board : list):
 
     pass
 
-
+###
 def menu():
     print('=== Welcome to the Connect4 game ===\nThis game was created by Monarch and Nan-fang\nNo copyright is allowed in any form.\n')
     print('1.Start the game with a computer\n2.Start the game with another player')
     pass
 
+
+
+###
 def ask_input_text(player : int):
     col = int(input("Player " + str(player) + " select column: "))
     popinput = input("Do you want to pop? (Y/N): ")
@@ -132,6 +155,8 @@ def ask_input_text(player : int):
         pop = False
     return col, pop
 
+
+###
 def ask_input(board, player):
     col, pop = ask_input_text(player)
     while not check_move(board, player, col, pop):
@@ -140,15 +165,20 @@ def ask_input(board, player):
     apply_move(board, player, col, pop)
     display_board(board)
 
+
 def main():
     menu()
     choice = input('> ')
     global row
     row = int(input("Enter the row numbers: "))
     board = []
+    
+    ###
     for _ in range(7 * row):
         board.append(0)
     display_board(board)
+
+    ###
     if choice == '2': 
         while True:
             ask_input(board, 1)
@@ -165,6 +195,7 @@ def main():
             elif check_victory(board, 2) == 2:
                 print("Congratulation! Player 2 has won the game!")
                 break
+    ###
     elif choice == '1':
         level = int(input("Select level: 1. Easy 2. Medium "))
         computer_turn = int(input("Do you want the CPU to be Player 1 or Player 2? "))
