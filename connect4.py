@@ -6,7 +6,7 @@ import sys
 import numpy as np
 import time
 
-###
+### check if a move is valid
 def check_move(board, turn, col, pop):
     if col in range(7):
         if pop:
@@ -15,7 +15,7 @@ def check_move(board, turn, col, pop):
             else:
                 return True
         elif not pop:
-            for i in range(col, row * 7 + 1, 7):
+            for i in range(col, row * 7, 7):
                 if board[i] == 0:
                     return True
             return False
@@ -24,6 +24,7 @@ def check_move(board, turn, col, pop):
     else:
         return False
 
+### make a move into board
 def apply_move(board, turn, col, pop):
     if not pop:
         for i in range(col, row * 7 + 1, 7):
@@ -37,11 +38,11 @@ def apply_move(board, turn, col, pop):
     return board.copy()
 
 
-###
-def check_full(board):
+### check if any 0 left in board
+def check_draw(board):
     check = True
     for i in range(len(board)):
-        if i != 0:
+        if board[i] != 0:
             check = True
         else:
             check = False
@@ -50,17 +51,7 @@ def check_full(board):
 
 
 ### 
-def check_draw(board):
-    if check_full(board):
-        if check_victory(board):
-            return True
-        else:
-            return False
-    else:
-        return False
-
-###
-def check_victory(board, who_played: int): # comment: there might be better solution but we are NOT computer scientists
+def check_victory(board, who_played: int):
     for i in range(0, row):
         for j in range(7):
             try:
@@ -74,17 +65,20 @@ def check_victory(board, who_played: int): # comment: there might be better solu
             except IndexError:
                 pass
             try:
-                if board[7 * i + j] == board[7 * (i + 1) + j + 1] == board[7 * (i + 2) + j + 2] == board[7 * (i + 3) + j + 3] == who_played:
-                    return who_played #right diagonal check
+                if j <= 3:
+                    if board[7 * i + j] == board[7 * (i + 1) + j + 1] == board[7 * (i + 2) + j + 2] == board[7 * (i + 3) + j + 3] == who_played:
+                        return who_played #right diagonal check
             except IndexError:
                 pass
             try:
-                if board[7 * i + j] == board[7 * (i + 1) + j - 1] == board[7 * (i + 2) + j - 2] == board[7 * (i + 3) + j - 3] == who_played:
-                    return who_played #left diagonal check
+                if j >= 3: 
+                    if board[7 * i + j] == board[7 * (i + 1) + j - 1] == board[7 * (i + 2) + j - 2] == board[7 * (i + 3) + j - 3] == who_played:
+                        return who_played #left diagonal check
             except IndexError:
                 pass
 
 
+### check if a direct win move is available
 def detect_victory(board, turn):
     for col in range(7):
         for pop in (True, False):
@@ -95,13 +89,15 @@ def detect_victory(board, turn):
                     return col, pop
     return 0
 
+
 def computer_level_1(board, turn):
     computer_pop = bool(random.getrandbits(1))
-    computer_col = random.randrange(0, row)
+    computer_col = random.randrange(0, 7)
     while not check_move(board, turn, computer_col, computer_pop):
         computer_pop = bool(random.getrandbits(1))
-        computer_col = random.randrange(0, row)
+        computer_col = random.randrange(0, 7)
     return computer_col, computer_pop
+
 
 def computer_level_2(board, turn, opponent_turn):
     try:
@@ -116,9 +112,8 @@ def computer_level_2(board, turn, opponent_turn):
                         apply_move(board_test, turn, col, pop)
                         if detect_victory(board_test, opponent_turn) == 0:
                             return col, pop
-        else: 
-            rand_col, rand_pop = computer_level_1(board, turn)
-            return rand_col, rand_pop
+        rand_col, rand_pop = computer_level_1(board, turn)
+        return rand_col, rand_pop
 
 
 def computer_move(board, turn, level, opponent_turn):
@@ -185,6 +180,20 @@ def ask_input(board, player):
     apply_move(board, player, col, pop)
     display_board(board)
 
+### check if win/draw condition is achieved and print text
+def print_result(board):
+    if check_victory(board, 1) == 1:
+        print("Congratulation! Player 1 has won the game!")
+        return True
+    elif check_victory(board, 2) == 2:
+        print("Congratulation! Player 2 has won the game!")
+        return True
+    elif check_draw(board):
+        print("The board is full! This is a draw.")
+        return True
+    else: 
+        return False
+    
 
 def main():
     menu()
@@ -202,18 +211,10 @@ def main():
     if choice == '2': 
         while True:
             ask_input(board, 1)
-            if check_victory(board, 1) == 1:
-                print("Congratulation! Player 1 has won the game!")
-                break
-            elif check_victory(board, 2) == 2:
-                print("Congratulation! Player 2 has won the game!")
+            if print_result(board):
                 break
             ask_input(board, 2)
-            if check_victory(board, 1) == 1:
-                print("Congratulation! Player 1 has won the game!")
-                break
-            elif check_victory(board, 2) == 2:
-                print("Congratulation! Player 2 has won the game!")
+            if print_result(board):
                 break
     ###
     elif choice == '1':
@@ -222,31 +223,19 @@ def main():
         while True:
             if computer_turn == 1: 
                 computer_move(board, computer_turn, level, 2)
-                if check_victory(board, 1) == 1:
-                    print("Congratulation! Player 1 has won the game!")
-                    break
-                elif check_victory(board, 2) == 2:
-                    print("Congratulation! Player 2 has won the game!")
+                if print_result(board):
                     break
                 ask_input(board, 2)
             elif computer_turn == 2: 
                 ask_input(board, 1)
-                if check_victory(board, 1) == 1:
-                    print("Congratulation! Player 1 has won the game!")
-                    break
-                elif check_victory(board, 2) == 2:
-                    print("Congratulation! Player 2 has won the game!")
+                if print_result(board):
                     break
                 computer_move(board, computer_turn, level, 1)
             else: 
                 print("Invalid input! The program is exiting...")
                 sys.exit()
-            if check_victory(board, 1) == 1:
-                print("Congratulation! Player 1 has won the game!")
-                break
-            elif check_victory(board, 2) == 2:
-                print("Congratulation! Player 2 has won the game!")
-                break
+            if print_result(board):
+                    break
 
 
 if __name__ == "__main__":
