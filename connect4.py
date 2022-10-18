@@ -101,7 +101,7 @@ def detect_victory(board, turn):
         for pop in (True, False):
             if check_move(board, turn, col, pop):
                 board_test = board.copy()
-                apply_move(board_test, turn, col, pop)
+                board_test = apply_move(board_test, turn, col, pop)
                 if check_victory(board_test, turn) == turn:
                     return col, pop
     return 0
@@ -127,7 +127,7 @@ def computer_level_2(board, turn):
                 for pop in (True, False):
                     board_test = board.copy()
                     if check_move(board_test, turn, col, pop):
-                        apply_move(board_test, turn, col, pop)
+                        board_test = apply_move(board_test, turn, col, pop)
                         if detect_victory(board_test, opponent_turn) == 0:
                             return col, pop
         rand_col, rand_pop = computer_level_1(board, turn)
@@ -143,8 +143,8 @@ def computer_move(board, turn, level):
 def computer_move_display(board, turn, level):
     computer_col, computer_pop = computer_move(board, turn, level)
     print("AI level" , level, "is making a move...")
-    apply_move(board, turn, computer_col, computer_pop)
-    display_board(board)
+    newboard = apply_move(board, turn, computer_col, computer_pop)
+    display_board(newboard)
 
         
 ### count timer of a turn
@@ -196,8 +196,9 @@ def ask_input(board, player):
     while not check_move(board, player, col, pop):
         print("Invalid! Please try again. ")
         col, pop = ask_input_text(player)
-    apply_move(board, player, col, pop)
-    display_board(board)
+    newboard = apply_move(board, player, col, pop)
+    display_board(newboard)
+    return newboard
 
 ### check if win/draw condition is achieved and print text
 def print_result(board):
@@ -218,7 +219,7 @@ def main():
     menu()
     choice = input('> ')
     try:
-        row = int(input("Enter the row numbers: (By default: 6)"))
+        row = int(input("Enter the row numbers (by default: 6): "))
     except: 
         row = 6
     board = []
@@ -231,10 +232,10 @@ def main():
     ###
     if choice == '2': 
         while True:
-            ask_input(board, 1)
+            board = ask_input(board, 1)
             if print_result(board):
                 break
-            ask_input(board, 2)
+            board = ask_input(board, 2)
             if print_result(board):
                 break
     ###
@@ -246,9 +247,9 @@ def main():
                 computer_move_display(board, computer_turn, level)
                 if print_result(board):
                     break
-                ask_input(board, 2)
+                board = ask_input(board, 2)
             elif computer_turn == 2: 
-                ask_input(board, 1)
+                board = ask_input(board, 1)
                 if print_result(board):
                     break
                 computer_move_display(board, computer_turn, level)
