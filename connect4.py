@@ -194,7 +194,7 @@ def print_result(board):
     else: 
         return False
     
-
+### start program here
 def main():
     menu()
     choice = input('> ')
