@@ -145,6 +145,7 @@ def computer_move_display(board, turn, level):
     print("AI level" , level, "is making a move...")
     newboard = apply_move(board, turn, computer_col, computer_pop)
     display_board(newboard)
+    return newboard
 
         
 ### count timer of a turn
@@ -172,7 +173,7 @@ def display_board(board : list):
     pass
 
 ###
-def menu():
+def start():
     print('=== Welcome to the Connect4 game ===\nThis game was created by Monarch and Nan-fang\nNo copyright is allowed in any form.\n')
     print('1.Start the game with a computer\n2.Start the game with another player')
     pass
@@ -215,8 +216,8 @@ def print_result(board):
         return False
     
 ### start program here
-def main():
-    menu()
+def menu():
+    start()
     choice = input('> ')
     try:
         row = int(input("Enter the row numbers (by default: 6): "))
@@ -244,7 +245,7 @@ def main():
         computer_turn = int(input("Do you want the CPU to be Player 1 or Player 2? "))
         while True:
             if computer_turn == 1: 
-                computer_move_display(board, computer_turn, level)
+                board = computer_move_display(board, computer_turn, level)
                 if print_result(board):
                     break
                 board = ask_input(board, 2)
@@ -252,7 +253,7 @@ def main():
                 board = ask_input(board, 1)
                 if print_result(board):
                     break
-                computer_move_display(board, computer_turn, level)
+                board = computer_move_display(board, computer_turn, level)
             else: 
                 print("Invalid input! The program is exiting...")
                 sys.exit()
@@ -261,4 +262,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    menu()
