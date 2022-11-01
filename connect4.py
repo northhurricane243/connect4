@@ -8,6 +8,7 @@ import time
 
 ### check if a move is valid
 def check_move(board, turn, col, pop):
+    row = int(len(board)/7)
     if col in range(7):
         if pop:
             if board[col] != turn:
@@ -26,16 +27,18 @@ def check_move(board, turn, col, pop):
 
 ### make a move into board
 def apply_move(board, turn, col, pop):
+    row = int(len(board)/7)
+    board_temp = board.copy()
     if not pop:
         for i in range(col, row * 7 + 1, 7):
-            if board[i] == 0:
-                board[i] = turn 
+            if board_temp[i] == 0:
+                board_temp[i] = turn 
                 break
     elif pop:
-        for i in range(col, 7*(row-1)+col, 7):
-            board[i] = board[i + 7]
-        board[7 * (row - 1) + col] = 0
-    return board.copy()
+        for i in range(col, row * 7 - 7, 7):
+            board_temp[i] = board_temp[i + 7]
+        board_temp[row * 7- 7 + col] = 0
+    return board_temp.copy()
 
 
 ### check if any 0 left in board
@@ -51,8 +54,21 @@ def check_draw(board):
 
 
 ### 
-def check_victory(board, who_played: int):
-    for i in range(0, row):
+def check_victory(board,  who_played: int):
+    check = check_four_piece(board, who_played)
+    if check == 0:
+        return check
+    else:
+        if check_four_piece(board, - who_played + 3):
+            return - who_played + 3
+        else:
+            return check
+
+
+
+def check_four_piece(board, who_played):
+    row = int(len(board)/7)
+    for i in range(row):
         for j in range(7):
             try:
                 if board[7 * i + j] == board[7 * i + j + 1] == board[7 * i + j + 2] == board[7 * i + j + 3] == who_played:
@@ -76,6 +92,7 @@ def check_victory(board, who_played: int):
                         return who_played #left diagonal check
             except IndexError:
                 pass
+    return 0
 
 
 ### check if a direct win move is available
@@ -84,7 +101,7 @@ def detect_victory(board, turn):
         for pop in (True, False):
             if check_move(board, turn, col, pop):
                 board_test = board.copy()
-                apply_move(board_test, turn, col, pop)
+                board_test = apply_move(board_test, turn, col, pop)
                 if check_victory(board_test, turn) == turn:
                     return col, pop
     return 0
@@ -99,7 +116,8 @@ def computer_level_1(board, turn):
     return computer_col, computer_pop
 
 
-def computer_level_2(board, turn, opponent_turn):
+def computer_level_2(board, turn):
+    opponent_turn = - turn + 3
     try:
         computer_col, computer_pop = detect_victory(board, turn)
         return computer_col, computer_pop
@@ -109,25 +127,26 @@ def computer_level_2(board, turn, opponent_turn):
                 for pop in (True, False):
                     board_test = board.copy()
                     if check_move(board_test, turn, col, pop):
-                        apply_move(board_test, turn, col, pop)
+                        board_test = apply_move(board_test, turn, col, pop)
                         if detect_victory(board_test, opponent_turn) == 0:
                             return col, pop
         rand_col, rand_pop = computer_level_1(board, turn)
         return rand_col, rand_pop
 
 
-def computer_move(board, turn, level, opponent_turn):
+def computer_move(board, turn, level):
     if level == 1:
-        computer_col, computer_pop = computer_level_1(board, turn)
-        print("AI level 1 is making a move...")
-        apply_move(board, turn, computer_col, computer_pop)
-        display_board(board)
-
+        return computer_level_1(board, turn)
     elif level == 2:
-        computer_col, computer_pop = computer_level_2(board, turn, opponent_turn)
-        print("AI level 2 is making a move...")
-        apply_move(board, turn, computer_col, computer_pop)
-        display_board(board)
+        return computer_level_2(board, turn)
+
+def computer_move_display(board, turn, level):
+    computer_col, computer_pop = computer_move(board, turn, level)
+    print("AI level" , level, "is making a move...")
+    newboard = apply_move(board, turn, computer_col, computer_pop)
+    display_board(newboard)
+    return newboard
+
         
 ### count timer of a turn
 def countdown(t):
@@ -143,6 +162,7 @@ def countdown(t):
 
 ###    
 def display_board(board : list):
+    row = int(len(board)/7)
     print()
     for i in range(row - 1, -1, -1):
         for j in range(7):
@@ -153,7 +173,7 @@ def display_board(board : list):
     pass
 
 ###
-def menu():
+def start():
     print('=== Welcome to the Connect4 game ===\nThis game was created by Monarch and Nan-fang\nNo copyright is allowed in any form.\n')
     print('1.Start the game with a computer\n2.Start the game with another player')
     pass
@@ -177,8 +197,9 @@ def ask_input(board, player):
     while not check_move(board, player, col, pop):
         print("Invalid! Please try again. ")
         col, pop = ask_input_text(player)
-    apply_move(board, player, col, pop)
-    display_board(board)
+    newboard = apply_move(board, player, col, pop)
+    display_board(newboard)
+    return newboard
 
 ### check if win/draw condition is achieved and print text
 def print_result(board):
@@ -194,12 +215,14 @@ def print_result(board):
     else: 
         return False
     
-
-def main():
-    menu()
+### start program here
+def menu():
+    start()
     choice = input('> ')
-    global row
-    row = int(input("Enter the row numbers: "))
+    try:
+        row = int(input("Enter the row numbers (by default: 6): "))
+    except: 
+        row = 6
     board = []
     
     ###
@@ -210,10 +233,10 @@ def main():
     ###
     if choice == '2': 
         while True:
-            ask_input(board, 1)
+            board = ask_input(board, 1)
             if print_result(board):
                 break
-            ask_input(board, 2)
+            board = ask_input(board, 2)
             if print_result(board):
                 break
     ###
@@ -222,15 +245,15 @@ def main():
         computer_turn = int(input("Do you want the CPU to be Player 1 or Player 2? "))
         while True:
             if computer_turn == 1: 
-                computer_move(board, computer_turn, level, 2)
+                board = computer_move_display(board, computer_turn, level)
                 if print_result(board):
                     break
-                ask_input(board, 2)
+                board = ask_input(board, 2)
             elif computer_turn == 2: 
-                ask_input(board, 1)
+                board = ask_input(board, 1)
                 if print_result(board):
                     break
-                computer_move(board, computer_turn, level, 1)
+                board = computer_move_display(board, computer_turn, level)
             else: 
                 print("Invalid input! The program is exiting...")
                 sys.exit()
@@ -239,4 +262,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    menu()
