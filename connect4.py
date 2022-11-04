@@ -2,7 +2,6 @@
 import random
 import math
 import sys
-# import test
 import numpy as np
 import time
 
@@ -182,12 +181,20 @@ def start():
 
 ###
 def ask_input_text(player : int):
+    check = False
     col = int(input("Player " + str(player) + " select column: "))
-    popinput = input("Do you want to pop? (Y/N): ")
-    if popinput == 'Y' or popinput == 'y':
-        pop = True
-    elif popinput == 'N' or popinput == 'n':
-        pop = False
+    while not check:
+        popinput = input("Do you want to pop? (Y/N): ")
+        if popinput == 'Y' or popinput == 'y':
+            pop = True
+            check = True
+        elif popinput == 'N' or popinput == 'n':
+            pop = False
+            check = True
+        else:
+            check = False
+            print("Invalid input! Please try again!")
+
     return col, pop
 
 
@@ -241,7 +248,7 @@ def menu():
                 break
     ###
     elif choice == '1':
-        level = int(input("Select level: 1. Easy 2. Medium "))
+        level = int(input("Select level:\n1.Easy\n2.Medium\n>>> "))
         computer_turn = int(input("Do you want the CPU to be Player 1 or Player 2? "))
         while True:
             if computer_turn == 1: 
