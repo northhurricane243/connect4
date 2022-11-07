@@ -40,17 +40,6 @@ def apply_move(board, turn, col, pop):
     return board_temp.copy()
 
 
-### check if any 0 left in board
-def check_draw(board):
-    check = True
-    for i in range(len(board)):
-        if board[i] != 0:
-            check = True
-        else:
-            check = False
-            break
-    return check
-
 
 ### 
 def check_victory(board,  who_played: int):
@@ -174,7 +163,7 @@ def display_board(board : list):
 ###
 def start():
     print('=== Welcome to the Connect4 game ===\nThis game was created by Monarch and Nan-fang\nNo copyright is allowed in any form.\n')
-    print('1.Start the game with a computer\n2.Start the game with another player')
+    print('1. Start the game with a computer\n2. Start the game with another player')
     pass
 
 
@@ -208,16 +197,13 @@ def ask_input(board, player):
     display_board(newboard)
     return newboard
 
-### check if win/draw condition is achieved and print text
+### check if win condition is achieved and print text
 def print_result(board):
     if check_victory(board, 1) == 1:
         print("Congratulation! Player 1 has won the game!")
         return True
     elif check_victory(board, 2) == 2:
         print("Congratulation! Player 2 has won the game!")
-        return True
-    elif check_draw(board):
-        print("The board is full! This is a draw.")
         return True
     else: 
         return False
@@ -248,7 +234,7 @@ def menu():
                 break
     ###
     elif choice == '1':
-        level = int(input("Select level:\n1.Easy\n2.Medium\n>>> "))
+        level = int(input("Select level:\n1. Easy\n2. Medium\n>>> "))
         computer_turn = int(input("Do you want the CPU to be Player 1 or Player 2? "))
         while True:
             if computer_turn == 1: 
